@@ -1,12 +1,11 @@
 # json-hashids
 
-A [json iterator](https://github.com/json-iterator/go) extension that marshal integer to short unique id
+[json iterator](https://github.com/json-iterator/go) 的扩展，可以把整型 marshal 为唯一的、不可预测的 id
+## 用法
 
-## Usage
+100% 兼容标准库
 
-100% compatibility with standard lib
-
-Replace
+替换
 ```go
 import "encoding/json"
 
@@ -14,7 +13,7 @@ json.Marshal(&data)
 json.Unmarshal(input, &data)
 ```
 
-with
+为
 ```go
 import "github.com/liamylian/jsonhashids"
 
@@ -25,7 +24,7 @@ json.Unmarshal(input, &data)
 ```
 
 
-## Example
+## 例子
 
 ```go
 package main

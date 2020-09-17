@@ -1,15 +1,18 @@
 package jsonhashids
 
 import (
-	"github.com/json-iterator/go"
-	"github.com/pkg/errors"
-	"github.com/speps/go-hashids"
 	"reflect"
 	"unsafe"
+
+	jsoniter "github.com/json-iterator/go"
+	"github.com/pkg/errors"
+	"github.com/speps/go-hashids"
 )
 
+// 定义一个错误。指出输入不是整型
 var ErrNotInteger = errors.New("not integer")
 
+// 为 jsoniter 注册扩展
 func NewConfigWithHashIDs(salt string, minLength int) jsoniter.API {
 
 	e := NewHashIDsExtension(salt, minLength)
@@ -19,6 +22,10 @@ func NewConfigWithHashIDs(salt string, minLength int) jsoniter.API {
 	return config
 }
 
+// 实例化扩展
+// @param salt 加密盐
+// @param minLength 生成的 id 的最小长度
+// return 返回扩展
 func NewHashIDsExtension(salt string, minLength int) *HashIDsExtension {
 	hd := hashids.NewData()
 	hd.Salt = salt
@@ -29,20 +36,22 @@ func NewHashIDsExtension(salt string, minLength int) *HashIDsExtension {
 	}
 }
 
+// 扩展结构
 type HashIDsExtension struct {
 	hashid *hashids.HashID
 	jsoniter.DummyExtension
 }
 
+// 更新结构解析器 ？
 func (extension *HashIDsExtension) UpdateStructDescriptor(structDescriptor *jsoniter.StructDescriptor) {
-
 	for _, binding := range structDescriptor.Fields {
-
+		// 如果字段有 tag hashids 且值为 true 继续， 否则执行下一次迭代
 		tag := binding.Field.Tag().Get("hashids")
 		if tag != "true" {
 			continue
 		}
 
+		// 如果字段类型为整型则继续，否则执行下一次迭代
 		switch binding.Field.Type().Kind() {
 		case reflect.Int:
 		case reflect.Uint:
@@ -116,8 +125,10 @@ func (encoder *funcEncoder) IsEmpty(ptr unsafe.Pointer) bool {
 	return encoder.isEmptyFunc(ptr)
 }
 
+// 转换为 int64
+// @param typeName 字段的类型
+// @param ptr 指向字段的指针
 func int64Val(typeName string, ptr unsafe.Pointer) (int64, error) {
-
 	var i int64
 
 	switch typeName {
@@ -158,6 +169,10 @@ func int64Val(typeName string, ptr unsafe.Pointer) (int64, error) {
 	return i, nil
 }
 
+// 设置为整型
+// @param typename 字段类型
+// @param ptr 指向字段的指针
+// @param val 要设置的值
 func setIntValue(typeName string, ptr unsafe.Pointer, val int64) error {
 	switch typeName {
 	case "int":
