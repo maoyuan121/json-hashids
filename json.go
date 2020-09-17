@@ -42,7 +42,8 @@ type HashIDsExtension struct {
 	jsoniter.DummyExtension
 }
 
-// 更新结构解析器 ？
+// 更新结构解析器
+// 实现扩展接口
 func (extension *HashIDsExtension) UpdateStructDescriptor(structDescriptor *jsoniter.StructDescriptor) {
 	for _, binding := range structDescriptor.Fields {
 		// 如果字段有 tag hashids 且值为 true 继续， 否则执行下一次迭代
@@ -101,6 +102,7 @@ func (extension *HashIDsExtension) UpdateStructDescriptor(structDescriptor *json
 	}
 }
 
+// 实现 ValDecoder 接口
 type funcDecoder struct {
 	fun jsoniter.DecoderFunc
 }
@@ -109,6 +111,7 @@ func (decoder *funcDecoder) Decode(ptr unsafe.Pointer, iter *jsoniter.Iterator) 
 	decoder.fun(ptr, iter)
 }
 
+// 实现 ValEncoder 接口
 type funcEncoder struct {
 	fun         jsoniter.EncoderFunc
 	isEmptyFunc func(ptr unsafe.Pointer) bool
